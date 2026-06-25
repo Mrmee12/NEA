@@ -25,6 +25,8 @@ public class PlayerSelectionScreen {
     String[] l_names = {"Garcia","Martin","Shepard","Burton","Todd","Novak","Herman","O'Brien","Braun","Dougherty","Mcmillan","Cherry","Hodges","House","Stanton","Howard","Jones","Smith","Field","Dylan","Mack","Woods","Goode"};
     private int sortCount = 0;
     String[] sortTitles = {"Speed","Strength","Tackling","Kicking"};
+    Player[] team = new Player[20];
+    int boughtPlayers = 0;
 
     //subroutine to create players
     public void players_create () {
@@ -214,6 +216,22 @@ public class PlayerSelectionScreen {
         }
 
         sr.setColor(Color.WHITE);
+
+        //add bought players to team
+        for (int i = 0;  i<players.length; i++){
+            if (players[i].isBought()){
+                for (int j = 0; j<boughtPlayers; j++) {
+                    if (team[j] == players[i]) {
+                    }
+                    else{
+                        System.out.println("purchased");
+                        team[boughtPlayers] = players[i];
+                        boughtPlayers++;
+                        break;
+                    }
+                }
+            }
+        }
     }
     // To allow the user to sort the players that are being displayed by their stats
     public Player[] sortPlayers (Player[] array, int count){
