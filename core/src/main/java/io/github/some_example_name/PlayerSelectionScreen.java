@@ -96,7 +96,11 @@ public class PlayerSelectionScreen {
             //checks if player has been clicked on and therefore bought
             if (600-Gdx.input.getY()<530) {
                 if (playerButtons[i].buttonPress(Gdx.input.getX(), 600 - Gdx.input.getY())) {
-                    players[i].setBought(true);
+                    if (!players[i].isBought()) {
+                        players[i].setBought(true);
+                        team[boughtPlayers] = players[i];
+                        boughtPlayers++;
+                    }
                 }
             }
         }
