@@ -13,7 +13,7 @@ import com.badlogic.gdx.Input;
 public class PlayerSelectionScreen {
     Button sortingButton = new Button(5,557,120,40,"Sort");
     private ShapeRenderer sr = new ShapeRenderer();
-    private int x=30,y=525;
+    private int x=30,y=525, price = 0;
     private SpriteBatch batch = new SpriteBatch();
     private BitmapFont font = new BitmapFont();
     private Random rand = new Random();
@@ -21,12 +21,12 @@ public class PlayerSelectionScreen {
     private Player[] players = new Player[36];
     //player buttons to select players from the list
     private Button[] playerButtons = new Button[36];
-    String[] f_names = {"Liam","Noah","Oliver","Theodore","James","Henry","Mateo","William","Benjamin","Levi","Sebastian","Jack","Daniel","Samuel","Michael","Ethan","John","Leo","David", "Bob","Josh","Rufus"};
-    String[] l_names = {"Garcia","Martin","Shepard","Burton","Todd","Novak","Herman","O'Brien","Braun","Dougherty","Mcmillan","Cherry","Hodges","House","Stanton","Howard","Jones","Smith","Field","Dylan","Mack","Woods","Goode"};
+    String[] f_names = {"Liam","Noah","Oliver","Theodore","James","Henry","Mateo","William","Benjamin","Levi","Nathan","Sebastian","Jack","Daniel","Samuel","Michael","Ethan","John","Leo","David", "Bob","Josh","Rufus"};
+    String[] l_names = {"Garcia","Cornish-barlow","Becker","Martin","Shepard","Burton","Todd","Novak","Herman","O'Brien","Braun","Dougherty","McMillan","Cherry","Hodges","House","Stanton","Howard","Jones","Smith","Field","Dylan","Mack","Woods","Goode"};
     private int sortCount = 0;
     String[] sortTitles = {"Speed","Strength","Tackling","Kicking"};
     Player[] team = new Player[20];
-    int boughtPlayers = 0;
+    private int boughtPlayers = 0, money = 400;
 
     //subroutine to create players
     public void players_create () {
@@ -37,6 +37,7 @@ public class PlayerSelectionScreen {
             String name = f_names[first] + " " + l_names[last];
             //                    speed,strength,tackling,kicking,name,x,y,position
             players[i] = new Player(rand.nextInt(2, 6), rand.nextInt(5, 11), rand.nextInt(5, 11), rand.nextInt(1, 5), name, 0, y, "Front Row",false,i);
+            players[i].setPrice(players[i].getSpeed()+players[i].getStrength()+players[i].getTackling()+players[i].getKicking());
             playerButtons[i]= new Button(0,players[i].getY(),1200,25,String.valueOf(i));
             y-=25;
         }
@@ -46,6 +47,7 @@ public class PlayerSelectionScreen {
             int last = rand.nextInt(0, l_names.length);
             String name = f_names[first] + " " + l_names[last];
             players[i] = new Player(rand.nextInt(4, 8), rand.nextInt(5, 11), rand.nextInt(5, 11), rand.nextInt(1, 6), name, 0, y, "Second Row",false,i);
+            players[i].setPrice(players[i].getSpeed()+players[i].getStrength()+players[i].getTackling()+players[i].getKicking());
             playerButtons[i]= new Button(0,players[i].getY(),1200,25,String.valueOf(i));
             y-=25;
         }
@@ -55,6 +57,7 @@ public class PlayerSelectionScreen {
             int last = rand.nextInt(0, l_names.length);
             String name = f_names[first] + " " + l_names[last];
             players[i] = new Player(rand.nextInt(5, 8), rand.nextInt(5, 9), rand.nextInt(5, 11), rand.nextInt(1, 6), name, 0, y, "Flanker",false,i);
+            players[i].setPrice(players[i].getSpeed()+players[i].getStrength()+players[i].getTackling()+players[i].getKicking());
             playerButtons[i]= new Button(0,players[i].getY(),1200,25,String.valueOf(i));
             y-=25;
         }
@@ -64,6 +67,7 @@ public class PlayerSelectionScreen {
             int last = rand.nextInt(0, l_names.length);
             String name = f_names[first] + " " + l_names[last];
             players[i] = new Player(rand.nextInt(6, 8), rand.nextInt(5, 9), rand.nextInt(5, 11), rand.nextInt(1, 6), name, 0, y, "Eight",false,i);
+            players[i].setPrice(players[i].getSpeed()+players[i].getStrength()+players[i].getTackling()+players[i].getKicking());
             playerButtons[i]= new Button(0,players[i].getY(),1200,25,String.valueOf(i));
             y-=25;
         }
@@ -73,6 +77,7 @@ public class PlayerSelectionScreen {
             int last = rand.nextInt(0, l_names.length);
             String name = f_names[first] + " " + l_names[last];
             players[i] = new Player(rand.nextInt(5, 11), rand.nextInt(2, 7), rand.nextInt(3, 8), rand.nextInt(5, 11), name, 0, y, "Back",false,i);
+            players[i].setPrice(players[i].getSpeed()+players[i].getStrength()+players[i].getTackling()+players[i].getKicking());
             playerButtons[i]= new Button(0,players[i].getY(),1200,25,String.valueOf(i));
             y-=25;
         }
@@ -93,13 +98,16 @@ public class PlayerSelectionScreen {
                 }
             }
 
-            //checks if player has been clicked on and therefore bought
+            //checks if player has been clicked on and therefore bought and add them to the team
             if (600-Gdx.input.getY()<530) {
-                if (playerButtons[i].buttonPress(Gdx.input.getX(), 600 - Gdx.input.getY())) {
-                    if (!players[i].isBought()) {
-                        players[i].setBought(true);
-                        team[boughtPlayers] = players[i];
-                        boughtPlayers++;
+                if (boughtPlayers!=20) {
+                    if (playerButtons[i].buttonPress(Gdx.input.getX(), 600 - Gdx.input.getY())) {
+                        if (!players[i].isBought()) {
+                            players[i].setBought(true);
+                            team[boughtPlayers] = players[i];
+                            boughtPlayers++;
+                            money -= players[i].getPrice();
+                        }
                     }
                 }
             }
@@ -112,17 +120,20 @@ public class PlayerSelectionScreen {
             kicking = players[i].getKicking();
             name = players[i].getName();
             position = players[i].getPosition();
+            price = players[i].getPrice();
             batch.begin();
             font.draw(batch, name, x, py);
-            x += 200;
+            x += 240;
             font.draw(batch, "" + speed, x, py);
-            x += 200;
+            x += 150;
             font.draw(batch, "" + strength, x, py);
-            x += 200;
+            x += 140;
             font.draw(batch, "" + tackling, x, py);
-            x += 200;
+            x += 150;
             font.draw(batch, "" + kicking, x, py);
-            x += 200;
+            x += 160;
+            font.draw(batch, "" + price, x, py);
+            x += 180;
             font.draw(batch, position, x, py);
             batch.end();
             x = 30;
@@ -151,18 +162,19 @@ public class PlayerSelectionScreen {
         sr.end();
         batch.begin();
         font.draw(batch, "Name", 30, 547);
-        font.draw(batch, "Speed", 230, 547);
-        font.draw(batch, "Strength", 430, 547);
-        font.draw(batch, "Tackling", 630, 547);
-        font.draw(batch, "Kicking", 830, 547);
-        font.draw(batch, "Position", 1030, 547);
+        font.draw(batch, "Speed", 240, 547);
+        font.draw(batch, "Strength", 390, 547);
+        font.draw(batch, "Tackling", 550, 547);
+        font.draw(batch, "Kicking", 690, 547);
+        font.draw(batch, "Price", 850,547);
+        font.draw(batch, "Position", 1040, 547);
         batch.end();
         // Drawing table lines
         sr.begin(ShapeRenderer.ShapeType.Filled);
         x = 200;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             sr.rect(x, 0, 3, 550);
-            x += 200;
+            x += 150;
         }
         x = 30;
         sr.rect(0, 530, 1200, 3);
@@ -181,6 +193,23 @@ public class PlayerSelectionScreen {
                 y -= 3;
             }
         }
+        // draw bank
+        sr.begin(ShapeRenderer.ShapeType.Filled);
+        sr.setColor(Color.ROYAL);
+        sr.rect(150,557,120,40);
+        sr.setColor(Color.WHITE);
+        sr.end();
+        batch.begin();
+        font.setColor(Color.GOLD);
+        font.draw(batch, "Money: "+money, 170,584);
+        font.setColor(Color.WHITE);
+        batch.end();
+
+        // draw number of owned player
+        batch.begin();
+        font.draw(batch, "Number of owned players: "+boughtPlayers,500,584);
+        batch.end();
+
         //print the filter by button
         sortingButton.draw(sr);
         batch.begin();
@@ -188,17 +217,21 @@ public class PlayerSelectionScreen {
         font.draw(batch, ""+sortTitles[sortCount],42,584);
         font.setColor(Color.WHITE);
         batch.end();
+
         //change colour if hovering
         if (sortingButton.buttonPress(Gdx.input.getX(), 600-Gdx.input.getY())){
             sr.setColor(Color.GRAY);
             sortingButton.draw(sr);
             sortCount++;
+
                 // check to see if sorting counter needs to be looped back round
                 if(sortCount>3){
                     sortCount=0;
                 }
+
             //sort players by their stats
             players = sortPlayers(players, sortCount);
+
             //have to swap buttons aswell
             for (int i = 0;i< players.length;i++){
                 int compare = Integer.parseInt(playerButtons[i].getIdentifier());
@@ -221,21 +254,6 @@ public class PlayerSelectionScreen {
 
         sr.setColor(Color.WHITE);
 
-        //add bought players to team
-        for (int i = 0;  i<players.length; i++){
-            if (players[i].isBought()){
-                for (int j = 0; j<boughtPlayers; j++) {
-                    if (team[j] == players[i]) {
-                    }
-                    else{
-                        System.out.println("purchased");
-                        team[boughtPlayers] = players[i];
-                        boughtPlayers++;
-                        break;
-                    }
-                }
-            }
-        }
     }
     // To allow the user to sort the players that are being displayed by their stats
     public Player[] sortPlayers (Player[] array, int count){

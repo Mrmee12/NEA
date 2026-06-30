@@ -80,6 +80,12 @@ public class Player {
     public void setId(int id) {
         this.id = id;
     }
+    public int getPrice() {
+        return price;
+    }
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
     public void draw (ShapeRenderer sr){
         sr.begin(ShapeRenderer.ShapeType.Filled);
