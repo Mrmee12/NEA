@@ -12,6 +12,7 @@ public class Main extends ApplicationAdapter {
     PlayerSelectionScreen playerBase;
     BitmapFont font;
     SpriteBatch batch;
+    public static int screenCount = 0;
 
     @Override
     public void create() {
@@ -25,7 +26,13 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        playerBase.printDisplay();
+        switch (screenCount){
+            case 0:
+                playerBase.printDisplay();
+                break;
+            case 1:
+
+        }
     }
 
     @Override

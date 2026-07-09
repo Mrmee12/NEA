@@ -21,12 +21,13 @@ public class PlayerSelectionScreen {
     private Player[] players = new Player[36];
     //player buttons to select players from the list
     private Button[] playerButtons = new Button[36];
-    String[] f_names = {"Liam","Noah","Oliver","Theodore","James","Henry","Mateo","William","Benjamin","Levi","Nathan","Sebastian","Jack","Daniel","Samuel","Michael","Ethan","John","Leo","David", "Bob","Josh","Rufus"};
-    String[] l_names = {"Garcia","Cornish-barlow","Becker","Martin","Shepard","Burton","Todd","Novak","Herman","O'Brien","Braun","Dougherty","McMillan","Cherry","Hodges","House","Stanton","Howard","Jones","Smith","Field","Dylan","Mack","Woods","Goode"};
+    private String[] f_names = {"Liam","Noah","Oliver","Theodore","James","Henry","Mateo","William","Benjamin","Levi","Nathan","Sebastian","Jack","Daniel","Samuel","Michael","Ethan","John","Leo","David", "Bob","Josh","Rufus"};
+    private String[] l_names = {"Garcia","Cornish-barlow","Becker","Martin","Shepard","Burton","Todd","Novak","Herman","O'Brien","Braun","Dougherty","McMillan","Cherry","Hodges","House","Stanton","Howard","Jones","Smith","Field","Dylan","Mack","Woods","Goode"};
     private int sortCount = 0;
-    String[] sortTitles = {"Speed","Strength","Tackling","Kicking"};
-    Player[] team = new Player[20];
+    private String[] sortTitles = {"Speed","Strength","Tackling","Kicking"};
+    public static Player[] team = new Player[20];
     private int boughtPlayers = 0, money = 400;
+    private Button nextScreen = new Button(1075,557,120,40,"continue 1");
 
     //subroutine to create players
     public void players_create () {
@@ -102,11 +103,13 @@ public class PlayerSelectionScreen {
             if (600-Gdx.input.getY()<530) {
                 if (boughtPlayers!=20) {
                     if (playerButtons[i].buttonPress(Gdx.input.getX(), 600 - Gdx.input.getY())) {
-                        if (!players[i].isBought()) {
-                            players[i].setBought(true);
-                            team[boughtPlayers] = players[i];
-                            boughtPlayers++;
-                            money -= players[i].getPrice();
+                        if (money>=players[i].getPrice()) {
+                            if (!players[i].isBought()) {
+                                players[i].setBought(true);
+                                team[boughtPlayers] = players[i];
+                                boughtPlayers++;
+                                money -= players[i].getPrice();
+                            }
                         }
                     }
                 }
@@ -247,6 +250,14 @@ public class PlayerSelectionScreen {
                 }
             }
         }
+        // next screen advance
+        sr.setColor(Color.PURPLE);
+        nextScreen.draw(sr);
+        sr.setColor(Color.WHITE);
+        if (nextScreen.buttonPress(Gdx.input.getX(),600-Gdx.input.getY())){
+            Main.screenCount++;
+        }
+
         // check to see if sorting counter needs to be looped back round
         if(sortCount>3){
             sortCount=0;
