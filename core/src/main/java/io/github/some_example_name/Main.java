@@ -6,6 +6,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
+import java.util.ArrayList;
+
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     ShapeRenderer sr;
@@ -14,6 +16,7 @@ public class Main extends ApplicationAdapter {
     BitmapFont font;
     SpriteBatch batch;
     public static int screenCount = 0;
+    public static ArrayList<Player> team = new ArrayList<>();;
 
     @Override
     public void create() {
@@ -33,7 +36,7 @@ public class Main extends ApplicationAdapter {
                 playerSelectionScreen.printDisplay();
                 break;
             case 1:
-                tacticsScreen.Screen2();
+                tacticsScreen.tacticsScreen();
         }
     }
 

@@ -25,7 +25,6 @@ public class PlayerSelectionScreen {
     private String[] l_names = {"Garcia","Cornish-barlow","Becker","Martin","Shepard","Burton","Todd","Novak","Herman","O'Brien","Braun","Dougherty","McMillan","Cherry","Hodges","House","Stanton","Howard","Jones","Smith","Field","Dylan","Mack","Woods","Goode"};
     private int sortCount = 0;
     private String[] sortTitles = {"Speed","Strength","Tackling","Kicking"};
-    public static Player[] team = new Player[20];
     private int boughtPlayers = 0, money = 400;
     private Button nextScreen = new Button(1075,557,120,40,"continue 1");
 
@@ -106,7 +105,7 @@ public class PlayerSelectionScreen {
                         if (money>=players[i].getPrice()) {
                             if (!players[i].isBought()) {
                                 players[i].setBought(true);
-                                team[boughtPlayers] = players[i];
+                                Main.team.add(boughtPlayers, players[i]);
                                 boughtPlayers++;
                                 money -= players[i].getPrice();
                             }
@@ -267,7 +266,6 @@ public class PlayerSelectionScreen {
         }
 
         sr.setColor(Color.WHITE);
-
     }
     // To allow the user to sort the players that are being displayed by their stats
     public Player[] sortPlayers (Player[] array, int count){
@@ -304,12 +302,5 @@ public class PlayerSelectionScreen {
             }
         }
         return array;
-    }
-
-    public Player[] getTeam() {
-        return team;
-    }
-    public void setTeam(Player[] team) {
-        this.team = team;
     }
 }
