@@ -254,6 +254,9 @@ public class PlayerSelectionScreen {
         sr.setColor(Color.PURPLE);
         nextScreen.draw(sr);
         sr.setColor(Color.WHITE);
+        batch.begin();
+        font.draw(batch, "Advance -->", 1100,583);
+        batch.end();
         if (nextScreen.buttonPress(Gdx.input.getX(),600-Gdx.input.getY())){
             Main.screenCount++;
         }
@@ -301,5 +304,12 @@ public class PlayerSelectionScreen {
             }
         }
         return array;
+    }
+
+    public Player[] getTeam() {
+        return team;
+    }
+    public void setTeam(Player[] team) {
+        this.team = team;
     }
 }

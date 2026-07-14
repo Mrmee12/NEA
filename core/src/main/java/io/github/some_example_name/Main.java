@@ -9,7 +9,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     ShapeRenderer sr;
-    PlayerSelectionScreen playerBase;
+    PlayerSelectionScreen playerSelectionScreen;
+    TacticsScreen tacticsScreen;
     BitmapFont font;
     SpriteBatch batch;
     public static int screenCount = 0;
@@ -17,8 +18,9 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         sr = new ShapeRenderer();
-        playerBase = new PlayerSelectionScreen();
-        playerBase.players_create();
+        playerSelectionScreen = new PlayerSelectionScreen();
+        playerSelectionScreen.players_create();
+        tacticsScreen = new TacticsScreen();
         font = new BitmapFont();
         batch = new SpriteBatch();
     }
@@ -28,10 +30,10 @@ public class Main extends ApplicationAdapter {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
         switch (screenCount){
             case 0:
-                playerBase.printDisplay();
+                playerSelectionScreen.printDisplay();
                 break;
             case 1:
-
+                tacticsScreen.Screen2();
         }
     }
 
