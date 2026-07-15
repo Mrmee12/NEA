@@ -22,7 +22,7 @@ public class PlayerSelectionScreen {
     //player buttons to select players from the list
     private Button[] playerButtons = new Button[36];
     private String[] f_names = {"Liam","Noah","Oliver","Theodore","James","Henry","Mateo","William","Benjamin","Levi","Nathan","Sebastian","Jack","Daniel","Samuel","Michael","Ethan","John","Leo","David", "Bob","Josh","Rufus"};
-    private String[] l_names = {"Garcia","Cornish-barlow","Becker","Martin","Shepard","Burton","Todd","Novak","Herman","O'Brien","Braun","Dougherty","McMillan","Cherry","Hodges","House","Stanton","Howard","Jones","Smith","Field","Dylan","Mack","Woods","Goode"};
+    private String[] l_names = {"Garcia","Becker","Martin","Shepard","Burton","Todd","Novak","Herman","O'Brien","Braun","Dougherty","McMillan","Cherry","Hodges","House","Stanton","Howard","Jones","Smith","Field","Dylan","Mack","Woods","Goode"};
     private int sortCount = 0;
     private String[] sortTitles = {"Speed","Strength","Tackling","Kicking"};
     private int boughtPlayers = 0, money = 400;
