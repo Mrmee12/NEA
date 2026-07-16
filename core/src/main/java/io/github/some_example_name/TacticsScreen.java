@@ -8,11 +8,12 @@ import java.util.ArrayList;
 
 public class TacticsScreen {
     ShapeRenderer sr = new ShapeRenderer();
-    private int x=950, y=300, count = 0;
+    private int x=930, y=510, count = 0, x2 = 930;
     private BitmapFont font = new BitmapFont();
     private SpriteBatch batch = new SpriteBatch();
     //making main.team eaisier for me to work with
     private ArrayList<Player> team = Main.team;
+    private Button[] buttons = new Button[20];
 
     public void tacticsScreen() {
         //make UI for this screen
@@ -26,21 +27,26 @@ public class TacticsScreen {
        // print out players
         for (int i=0; i<team.size(); i++){
             team.get(i).setId(i);
-            Button button = new Button(x,y,50,50, Integer.toString(i));
+            y+=30;
+            buttons[i] = new Button(x,y,50,50, Integer.toString(i));
             batch.begin();
             font.draw(batch,""+team.get(i).getName(),x,y);
+            y-=15;
+            font.draw(batch,"Spd  Str  Tck  Kck",x,y);
+            y-=15;
+            font.draw(batch,"  "+team.get(i).getSpeed()+"   "+team.get(i).getStrength()+"   "+team.get(i).getTackling()+"   "+team.get(i).getKicking(),x,y);
             batch.end();
             x+=150;
             count++;
             if (count==2){
-                x=950;
-                y-=75;
+                x=930;
+                y-=55;
                 count=0;
             }
         }
         count=0;
-        x=950;
-        y=300;
+        x=930;
+        y=510;
 
         //Header
         sr.begin(ShapeRenderer.ShapeType.Filled);
