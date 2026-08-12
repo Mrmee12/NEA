@@ -1,5 +1,6 @@
 package io.github.some_example_name;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -24,17 +25,39 @@ public class TacticsScreen {
         sr.rect(895,0,10,600);
         sr.end();
 
-       // print out players
+        // reset the ID of all players to link to the team and make them all have a button
         for (int i=0; i<team.size(); i++){
             team.get(i).setId(i);
+            buttons[i] = new Button(x-5,y-15,125,50, Integer.toString(i));
+            x+=150;
+            count++;
+            if(count==2){
+                y-=55;
+                x=930;
+                count=0;
+            }
+        }
+        count=0;
+
+        //check if hovering over player
+        for (int i=0;i<team.size();i++){
+            if (buttons[i].buttonhover(Gdx.input.getX(), 600-Gdx.input.getY())){
+                sr.setColor(Color.OLIVE);
+                buttons[i].draw(sr);
+                sr.setColor(Color.WHITE);
+            }
+        }
+
+       // print out players
+        y=510;
+        for (int i=0; i<team.size(); i++){
             y+=30;
-            buttons[i] = new Button(x,y,50,50, Integer.toString(i));
             batch.begin();
             font.draw(batch,""+team.get(i).getName(),x,y);
             y-=15;
             font.draw(batch,"Spd  Str  Tck  Kck",x,y);
             y-=15;
-            font.draw(batch,"  "+team.get(i).getSpeed()+"   "+team.get(i).getStrength()+"   "+team.get(i).getTackling()+"   "+team.get(i).getKicking(),x,y);
+            font.draw(batch,"  "+team.get(i).getSpeed()+"      "+team.get(i).getStrength()+"     "+team.get(i).getTackling()+"      "+team.get(i).getKicking(),x,y);
             batch.end();
             x+=150;
             count++;
