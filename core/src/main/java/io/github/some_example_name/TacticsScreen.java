@@ -9,9 +9,10 @@ import java.util.ArrayList;
 
 public class TacticsScreen {
     ShapeRenderer sr = new ShapeRenderer();
-    private int x=930, y=510, count = 0, x2 = 930;
+    private int x=930, y=510, count = 0, x2 = 930, playerHeld = -1, buttonsX, buttonsY;
     private BitmapFont font = new BitmapFont();
     private SpriteBatch batch = new SpriteBatch();
+    private boolean intitalSetup=true;
     //making main.team eaisier for me to work with
     private ArrayList<Player> team = Main.team;
     private Button[] buttons = new Button[20];
@@ -26,22 +27,26 @@ public class TacticsScreen {
         sr.end();
 
         // reset the ID of all players to link to the team and make them all have a button
-        for (int i=0; i<team.size(); i++){
-            team.get(i).setId(i);
-            buttons[i] = new Button(x-5,y-15,125,50, Integer.toString(i));
-            x+=150;
-            count++;
-            if(count==2){
-                y-=55;
-                x=930;
-                count=0;
+        if(intitalSetup) {
+            for (int i = 0; i < team.size(); i++) {
+                team.get(i).setId(i);
+                buttons[i] = new Button(x, y-15, 125, 50, Integer.toString(i));
+                x += 150;
+                count++;
+                if (count == 2) {
+                    y -= 55;
+                    x = 930;
+                    count = 0;
+                }
+
             }
+            intitalSetup=false;
         }
         count=0;
 
         //check if hovering over player
-        for (int i=0;i<team.size();i++){
-            if (buttons[i].buttonhover(Gdx.input.getX(), 600-Gdx.input.getY())){
+        for (int i=0;i<team.size();i++) {
+            if (buttons[i].buttonhover(Gdx.input.getX(), 600 - Gdx.input.getY())) {
                 sr.setColor(Color.OLIVE);
                 buttons[i].draw(sr);
                 sr.setColor(Color.WHITE);
@@ -49,27 +54,30 @@ public class TacticsScreen {
         }
 
        // print out players
-        y=510;
         for (int i=0; i<team.size(); i++){
-            y+=30;
-            batch.begin();
-            font.draw(batch,""+team.get(i).getName(),x,y);
-            y-=15;
-            font.draw(batch,"Spd  Str  Tck  Kck",x,y);
-            y-=15;
-            font.draw(batch,"  "+team.get(i).getSpeed()+"      "+team.get(i).getStrength()+"     "+team.get(i).getTackling()+"      "+team.get(i).getKicking(),x,y);
-            batch.end();
-            x+=150;
+            printPlayer(team.get(i), buttons[i].getX(), buttons[i].getY());
             count++;
-            if (count==2){
-                x=930;
-                y-=55;
-                count=0;
+        }
+
+        //check if button is being held
+        if (playerHeld == -1) {
+            for (int i = 0; i<team.size();i++) {
+                if (buttons[i].buttonhold(Gdx.input.getX(), 600 - Gdx.input.getY())) {
+                    playerHeld = Integer.valueOf(buttons[i].getIdentifier());
+                    break;
+                }
             }
         }
-        count=0;
-        x=930;
-        y=510;
+        //match to mouse
+        if(playerHeld!=-1) {
+            if (buttons[playerHeld].buttonhold(Gdx.input.getX(), 600 - Gdx.input.getY())) {
+                buttons[playerHeld].setX(Gdx.input.getX()-50);
+                buttons[playerHeld].setY(600 - Gdx.input.getY()-20);
+            } else {
+                playerHeld = -1;
+            }
+        }
+
 
         //Header
         sr.begin(ShapeRenderer.ShapeType.Filled);
@@ -77,5 +85,17 @@ public class TacticsScreen {
         sr.rect(0, 550, 1200, 50);
         sr.setColor(Color.WHITE);
         sr.end();
+    }
+
+    // player print algorithm
+    public void printPlayer (Player player,int x, int y){
+        y += 45;
+        batch.begin();
+        font.draw(batch, "" + player.getName(), x, y);
+        y -= 15;
+        font.draw(batch, "Spd  Str  Tck  Kck", x, y);
+        y -= 15;
+        font.draw(batch, "  " + player.getSpeed() + "      " + player.getStrength() + "     " + player.getTackling() + "      " + player.getKicking(), x, y);
+        batch.end();
     }
 }

@@ -74,4 +74,14 @@ public class Button {
         }
         return false;
     }
+    public boolean buttonhold (int mouseX, int mouseY) {
+        if (mouseX > x && mouseX < (x + width)) {
+            if (mouseY < (y + height) && mouseY > y) {
+                if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
