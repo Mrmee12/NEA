@@ -9,13 +9,14 @@ import java.util.ArrayList;
 
 public class TacticsScreen {
     ShapeRenderer sr = new ShapeRenderer();
-    private int x=930, y=510, count = 0, x2 = 930, playerHeld = -1, buttonsX, buttonsY;
+    private int x=930, y=510, count = 0, x2 = 930, playerHeld = -1, temp;
     private BitmapFont font = new BitmapFont();
     private SpriteBatch batch = new SpriteBatch();
     private boolean intitalSetup=true;
     //making main.team eaisier for me to work with
     private ArrayList<Player> team = Main.team;
     private Button[] buttons = new Button[20];
+    private Slot[] slots = new Slot[15];
 
     public void tacticsScreen() {
         //make UI for this screen
@@ -40,24 +41,47 @@ public class TacticsScreen {
                 }
 
             }
+
+            // generate slots for players to be dragged into
+            x=410;
+            y=490;
+            for (int i = 1; i<16; i++){
+                if (i<4){
+                    slots[i-1] = new Slot(x,y,125,50,-1,true);
+                    x+=130;
+                }
+                else if (i>3 && i<8){
+                    if (i==4){
+                        x=345;
+                        y-=55;
+                    }
+                    slots[i-1]  = new Slot(x,y,125,50,-1,true);
+                    x+=130;
+                }
+                else if (i==8){
+                    x=537;
+                    y-=55;
+                    slots [i-1] = new Slot(x,y,125, 50,-1,true);
+                }
+                else if (i>8 && i<15) {
+                    if (i == 9) {
+                        x = 310;
+                        y -= 55;
+                    }
+                    slots[i-1] = new Slot(x, y, 125, 50, -1, true);
+                    y -= 55;
+                    x += 90;
+                }
+                else{
+                    x=372;
+                    y+=55;
+                    slots[i-1] = new Slot(x,y,125,50,-1,true);
+                }
+            }
+
             intitalSetup=false;
         }
         count=0;
-
-        //check if hovering over player
-        for (int i=0;i<team.size();i++) {
-            if (buttons[i].buttonhover(Gdx.input.getX(), 600 - Gdx.input.getY())) {
-                sr.setColor(Color.OLIVE);
-                buttons[i].draw(sr);
-                sr.setColor(Color.WHITE);
-            }
-        }
-
-       // print out players
-        for (int i=0; i<team.size(); i++){
-            printPlayer(team.get(i), buttons[i].getX(), buttons[i].getY());
-            count++;
-        }
 
         //check if button is being held
         if (playerHeld == -1) {
@@ -78,6 +102,64 @@ public class TacticsScreen {
             }
         }
 
+        // print out the slots
+        for (int i =0; i<15; i++){
+            if (slots[i].isEmpty()){
+                sr.setColor(Color.RED);
+                slots[i].draw(sr);
+            }
+            else{
+                sr.setColor(Color.TEAL);
+                slots[i].draw(sr);
+            }
+        }
+        sr.setColor(Color.WHITE);
+
+        //check if hovering over player
+        for (int i=0;i<team.size();i++) {
+            if (buttons[i].buttonhover(Gdx.input.getX(), 600 - Gdx.input.getY())) {
+                sr.setColor(Color.OLIVE);
+                buttons[i].draw(sr);
+                sr.setColor(Color.WHITE);
+            }
+        }
+
+        // see if needed to click into slot
+        if (playerHeld==-1){
+            for (int i=0; i<15; i++) {
+                for (int j = 0; j < team.size(); j++) {
+                    if (slots[i].isEmpty()) {
+                        if (slots[i].detect(buttons[j].getX(), buttons[j].getY())) {
+                            slots[i].setEmpty(false);
+                            slots[i].setId(Integer.valueOf(buttons[j].getIdentifier()));
+                            buttons[j].setX(slots[i].getX());
+                            buttons[j].setY(slots[i].getY());
+                            if (!Main.starting.contains(team.get(j))) {
+                                Main.starting.add(team.get(j));
+                            }
+                        }
+                    }
+                    // detect if removed
+                    temp = slots[i].getId();
+                    if (temp != -1){
+                        if (slots[i].getX() != buttons[temp].getX()){
+                            if (slots[i].getY() != buttons[temp].getY()){
+                                slots[i].setEmpty(true);
+                                slots[i].setId(-1);
+                                Main.starting.remove(team.get(temp));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // print out players
+        for (int i=0; i<team.size(); i++){
+            printPlayer(team.get(i), buttons[i].getX(), buttons[i].getY());
+            count++;
+        }
 
         //Header
         sr.begin(ShapeRenderer.ShapeType.Filled);

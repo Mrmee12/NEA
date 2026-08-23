@@ -1,6 +1,8 @@
 package io.github.some_example_name;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -16,7 +18,8 @@ public class Main extends ApplicationAdapter {
     BitmapFont font;
     SpriteBatch batch;
     public static int screenCount = 0;
-    public static ArrayList<Player> team = new ArrayList<>();;
+    public static ArrayList<Player> team = new ArrayList<>();
+    public static ArrayList<Player> starting = new ArrayList<>();
 
     @Override
     public void create() {
