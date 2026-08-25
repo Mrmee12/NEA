@@ -20,6 +20,7 @@ public class Main extends ApplicationAdapter {
     public static int screenCount = 0;
     public static ArrayList<Player> team = new ArrayList<>();
     public static ArrayList<Player> starting = new ArrayList<>();
+    public static int crashBalls = 0;
 
     @Override
     public void create() {

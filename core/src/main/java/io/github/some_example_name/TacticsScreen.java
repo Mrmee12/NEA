@@ -1,10 +1,10 @@
 package io.github.some_example_name;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class TacticsScreen {
@@ -17,6 +17,8 @@ public class TacticsScreen {
     private ArrayList<Player> team = Main.team;
     private Button[] buttons = new Button[20];
     private Slot[] slots = new Slot[15];
+    private Button nextScreen = new Button(1075,557,120,40,"continue 2");
+    private Button crashBalls = new Button(150,495,70,20, "Crash Balls");
 
     public void tacticsScreen() {
         //make UI for this screen
@@ -154,6 +156,28 @@ public class TacticsScreen {
             }
         }
 
+        //let the user decide how many crash balls they want
+        if (crashBalls.buttonhover(Gdx.input.getX(), 600-Gdx.input.getY())){
+            sr.setColor(Color.OLIVE);
+            crashBalls.draw(sr);
+            sr.setColor(Color.WHITE);
+        }
+        if (crashBalls.buttonPress(Gdx.input.getX(), 600 - Gdx.input.getY())) {
+            Main.crashBalls++;
+            if (Main.crashBalls>10){
+                Main.crashBalls=0;
+            }
+        }
+        batch.begin();
+        font.draw(batch, "How many Crash Balls before sending the", 10,540);
+        font.draw(batch,  "ball out to the backs:", 10,510);
+        font.draw(batch,"" + Main.crashBalls, 155,510);
+        batch.end();
+        sr.begin(ShapeRenderer.ShapeType.Line);
+        sr.rect(150,495,70,20);
+        sr.end();
+
+
 
         // print out players
         for (int i=0; i<team.size(); i++){
@@ -167,6 +191,17 @@ public class TacticsScreen {
         sr.rect(0, 550, 1200, 50);
         sr.setColor(Color.WHITE);
         sr.end();
+
+        // next screen advance
+        sr.setColor(Color.PURPLE);
+        nextScreen.draw(sr);
+        sr.setColor(Color.WHITE);
+        batch.begin();
+        font.draw(batch, "Advance -->", 1100,583);
+        batch.end();
+        if (nextScreen.buttonPress(Gdx.input.getX(),600-Gdx.input.getY())){
+            Main.screenCount++;
+        }
     }
 
     // player print algorithm
