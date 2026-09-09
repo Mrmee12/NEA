@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class Player {
     private int speed, strength, tackling, kicking, x, y, price, id;
     private String name, position;
-    private boolean bought;
+    private boolean bought, isTackled, hasBall;
 
     public Player(int speed, int strength, int tackling, int kicking, String name, int x, int y, String position, Boolean bought, int id) {
         this.speed = speed;
@@ -86,7 +86,18 @@ public class Player {
     public void setPrice(int price) {
         this.price = price;
     }
-
+    public boolean isTackled() {
+        return isTackled;
+    }
+    public void setTackled(boolean tackled) {
+        isTackled = tackled;
+    }
+    public boolean isHasBall() {
+        return hasBall;
+    }
+    public void setHasBall(boolean hasBall) {
+        this.hasBall = hasBall;
+    }
     public void draw (ShapeRenderer sr){
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.circle(x,y,10);

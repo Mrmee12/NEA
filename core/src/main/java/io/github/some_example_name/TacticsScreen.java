@@ -19,6 +19,9 @@ public class TacticsScreen {
     private Slot[] slots = new Slot[15];
     private Button nextScreen = new Button(1075,557,120,40,"continue 2");
     private Button crashBalls = new Button(150,495,70,20, "Crash Balls");
+    private Button front = new Button(138,385,20,20, "front");
+    private Button middle = new Button(138,225,20,20, "middle");
+    private Button back = new Button(138,95,20,20,"back");
 
     public void tacticsScreen() {
         //make UI for this screen
@@ -177,6 +180,37 @@ public class TacticsScreen {
         sr.rect(150,495,70,20);
         sr.end();
 
+        // lineout where to throw
+        sr.begin(ShapeRenderer.ShapeType.Filled);
+        sr.rect(0,475,295,10);
+        sr.rect(145,45,5,400);
+        sr.rect(123,395,50,5);
+        sr.rect(123,95,50,5);
+        sr.end();
+        sr.setColor(Color.RED);
+        front.draw(sr);
+        middle.draw(sr);
+        back.draw(sr);
+        if (Main.whereToThrow==0){
+            sr.setColor(Color.TEAL);
+            front.draw(sr);
+        } else if (Main.whereToThrow==1) {
+            sr.setColor(Color.TEAL);
+            middle.draw(sr);
+        } else{
+            sr.setColor(Color.TEAL);
+            back.draw(sr);
+        }
+        sr.setColor(Color.WHITE);
+        if (front.buttonPress(Gdx.input.getX(), 600-Gdx.input.getY())){
+            Main.whereToThrow=0;
+        }
+        if (middle.buttonPress(Gdx.input.getX(), 600-Gdx.input.getY())){
+            Main.whereToThrow=1;
+        }
+        if (back.buttonPress(Gdx.input.getX(), 600-Gdx.input.getY())){
+            Main.whereToThrow=2;
+        }
 
 
         // print out players
@@ -200,7 +234,7 @@ public class TacticsScreen {
         font.draw(batch, "Advance -->", 1100,583);
         batch.end();
         if (nextScreen.buttonPress(Gdx.input.getX(),600-Gdx.input.getY())){
-            Main.screenCount++;
+            Main.screenCount=2;
         }
     }
 
