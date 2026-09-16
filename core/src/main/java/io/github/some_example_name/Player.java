@@ -100,7 +100,7 @@ public class Player {
     }
     public void draw (ShapeRenderer sr){
         sr.begin(ShapeRenderer.ShapeType.Filled);
-        sr.circle(x,y,10);
+        sr.rect(x,y,20,20);
         sr.end();
     }
 }

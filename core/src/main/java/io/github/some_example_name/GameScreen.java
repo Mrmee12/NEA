@@ -2,8 +2,14 @@ package io.github.some_example_name;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class GameScreen {
     private ShapeRenderer sr = new ShapeRenderer();
+    private Random rand = new Random();
+    private Player player = new Player(5,5,5,5,"a", 500,300,"p",true,1);
+    private Player player2 = new Player(5,5,5,5,"a", 450,310,"p",true,1);
     public void gameScreen (){
         // create the pitch for the players
         sr.begin(ShapeRenderer.ShapeType.Filled);
@@ -57,5 +63,34 @@ public class GameScreen {
         sr.rect(765, 505,5,50);
         sr.rect(977, 505,5,50);
         sr.end();
+    }
+    //p1 is the ball carrier and p2 is the defender
+    public Boolean tackled (Player p1, Player p2){
+        int carryChance = (p1.getStrength()+p1.getSpeed())-p2.getTackling();
+        //check if player gets tackled
+        if ((p1.getY() +20 <= p2.getY() +20 && p1.getY() +20 >= p2.getY()) || (p1.getY() >= p2.getY() && p1.getY() <= p2.getY() +20)){
+            if (p1.getX() <= p2.getX() + 20 && p1.getX() + 20 >= p2.getX() ){
+                if (rand.nextInt(0,80) > carryChance) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Boolean pass (ArrayList <Player> team){
+        int[] difficulty = new int[15];
+        int hasBall = 0, temp;
+        for (int i = 0; i<15; i++){
+            if (team.get(i).isHasBall()){
+                hasBall = i;
+                break;
+            }
+        }
+        //calculate easiest route
+        for (int i = 0; i<15;i++){
+            temp = team.get(i).getX()-team.get(hasBall).getX();
+
+        }
     }
 }
