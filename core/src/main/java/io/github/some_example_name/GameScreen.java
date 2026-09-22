@@ -2,6 +2,7 @@ package io.github.some_example_name;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -9,7 +10,6 @@ public class GameScreen {
     private ShapeRenderer sr = new ShapeRenderer();
     private Random rand = new Random();
     private Player player = new Player(5,5,5,5,"a", 500,300,"p",true,1);
-    private Player player2 = new Player(5,5,5,5,"a", 450,310,"p",true,1);
     public void gameScreen (){
         // create the pitch for the players
         sr.begin(ShapeRenderer.ShapeType.Filled);
@@ -78,19 +78,46 @@ public class GameScreen {
         return false;
     }
 
-    public Boolean pass (ArrayList <Player> team){
+    public int pass (ArrayList <Player> team, ArrayList <Player> opp){
+        // return options = 0, 1, 2; 0 means carry, 1 means pass up the screen, 2 means pass down the screen
         int[] difficulty = new int[15];
-        int hasBall = 0, temp;
+        int hasBall = 0, distance, lineBreak = 0, bestOption = -1;
         for (int i = 0; i<15; i++){
             if (team.get(i).isHasBall()){
                 hasBall = i;
                 break;
             }
         }
+        for (int i = 0; i>15; i++) {
+            //check if ball carrier has anyone in front of them
+            if (team.get(hasBall).getY() + 20 <= opp.get(i).getY() && team.get(hasBall).getY() >= opp.get(i).getY()) {
+                bestOption = hasBall;
+                return 0;
+            }
+        }
+
         //calculate easiest route
         for (int i = 0; i<15;i++){
-            temp = team.get(i).getX()-team.get(hasBall).getX();
+            //calculate how far away from the player they are
+            distance = Math.abs(team.get(i).getY()-team.get(hasBall).getY());
 
+            // calculate likelihood of a line break
+            for (int j = 0; j<15; j++) {
+                if (team.get(i).getY() + 20 <= opp.get(j).getY() && team.get(i).getY() >= opp.get(j).getY()){
+                    lineBreak = Math.abs(team.get(i).getStrength()-opp.get(j).getTackling());
+                    break;
+                }
+            }
+            if ((distance+lineBreak)>bestOption){
+                bestOption = i;
+            }
         }
+        if (team.get(bestOption).getY()>team.get(hasBall).getY()){
+            return 1;
+        }
+        if (team.get(bestOption).getY()<team.get(hasBall).getY()){
+            return 2;
+        }
+        return 0;
     }
 }
