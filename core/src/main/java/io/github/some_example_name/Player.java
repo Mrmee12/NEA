@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class Player {
     private int speed, strength, tackling, kicking, x, y, price, id;
     private String name, position;
-    private boolean bought, isTackled, hasBall;
+    private boolean bought, isTackled, hasBall = false;
 
     public Player(int speed, int strength, int tackling, int kicking, String name, int x, int y, String position, Boolean bought, int id) {
         this.speed = speed;

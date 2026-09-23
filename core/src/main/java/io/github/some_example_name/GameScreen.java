@@ -7,10 +7,23 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameScreen {
+    private ArrayList <Player> team1 = new ArrayList<Player>();
+    private ArrayList <Player> team2 = new ArrayList<Player>();
+    private Teams teams = new Teams();
     private ShapeRenderer sr = new ShapeRenderer();
     private Random rand = new Random();
-    private Player player = new Player(5,5,5,5,"a", 500,300,"p",true,1);
+    private boolean init = true;
     public void gameScreen (){
+        if (init){
+            teams.easyInit(team1);
+            teams.easyInit(team2);
+            //team2.add(new Player(5,5,5,5,"1",0,600,"p",true,1));
+            for (int i = 0; i<15;i++){
+                team2.get(i).setY(team2.get(i).getY()+80);
+            }
+            init=false;
+        }
+
         // create the pitch for the players
         sr.begin(ShapeRenderer.ShapeType.Filled);
         sr.setColor(Color.OLIVE);
@@ -63,6 +76,20 @@ public class GameScreen {
         sr.rect(765, 505,5,50);
         sr.rect(977, 505,5,50);
         sr.end();
+
+        for (int i = 0; i<15; i++){
+            int x, y;
+            sr.begin(ShapeRenderer.ShapeType.Filled);
+            x = team1.get(i).getX();
+            y = team1.get(i).getY();
+            sr.rect(x,y,20,20);
+            x = team2.get(i).getX()+300;
+            y = team2.get(i).getY();
+            sr.rect(x,y,20,20);
+            sr.end();
+        }
+        team1.get(7).setHasBall(true);
+        System.out.println(pass(team1,team2));
     }
     //p1 is the ball carrier and p2 is the defender
     public Boolean tackled (Player p1, Player p2){
@@ -81,36 +108,45 @@ public class GameScreen {
     public int pass (ArrayList <Player> team, ArrayList <Player> opp){
         // return options = 0, 1, 2; 0 means carry, 1 means pass up the screen, 2 means pass down the screen
         int[] difficulty = new int[15];
-        int hasBall = 0, distance, lineBreak = 0, bestOption = -1;
+        int count = 0;
+        int hasBall = 0, distance, lineBreak = 0, bestOption = -1, score=-1;
         for (int i = 0; i<15; i++){
             if (team.get(i).isHasBall()){
                 hasBall = i;
                 break;
             }
         }
-        for (int i = 0; i>15; i++) {
+        for (int i = 0; i<opp.size(); i++) {
             //check if ball carrier has anyone in front of them
-            if (team.get(hasBall).getY() + 20 <= opp.get(i).getY() && team.get(hasBall).getY() >= opp.get(i).getY()) {
-                bestOption = hasBall;
-                return 0;
+            if ((team.get(hasBall).getY()+20>opp.get(i).getY()&&team.get(hasBall).getY()<opp.get(i).getY()+20)) {
+                count++;
+                if (count==opp.size()) {
+                    bestOption = hasBall;
+                    return 0;
+                }
+            }
+            else{
+                count=0;
             }
         }
 
         //calculate easiest route
-        for (int i = 0; i<15;i++){
+        for (int i = 0; i<team.size();i++){
             //calculate how far away from the player they are
             distance = Math.abs(team.get(i).getY()-team.get(hasBall).getY());
 
             // calculate likelihood of a line break
-            for (int j = 0; j<15; j++) {
-                if (team.get(i).getY() + 20 <= opp.get(j).getY() && team.get(i).getY() >= opp.get(j).getY()){
-                    lineBreak = Math.abs(team.get(i).getStrength()-opp.get(j).getTackling());
+            for (int j = 0; j<opp.size(); j++) {
+                if (team.get(i).getY()+20>opp.get(j).getY()&&team.get(i).getY()<opp.get(j).getY()+20){
+                    lineBreak = (team.get(i).getStrength()-opp.get(j).getTackling())+10;
                     break;
                 }
             }
-            if ((distance+lineBreak)>bestOption){
+            if ((lineBreak-distance)<score){
+                score = lineBreak-distance;
                 bestOption = i;
             }
+            lineBreak=0;
         }
         if (team.get(bestOption).getY()>team.get(hasBall).getY()){
             return 1;
