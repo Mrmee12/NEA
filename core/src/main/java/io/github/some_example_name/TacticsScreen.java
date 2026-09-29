@@ -22,6 +22,7 @@ public class TacticsScreen {
     private Button front = new Button(138,385,20,20, "front");
     private Button middle = new Button(138,225,20,20, "middle");
     private Button back = new Button(138,95,20,20,"back");
+
     public void tacticsScreen() {
         //make UI for this screen
         sr.begin(ShapeRenderer.ShapeType.Filled);
@@ -190,19 +191,19 @@ public class TacticsScreen {
         front.draw(sr);
         middle.draw(sr);
         back.draw(sr);
-       if (Main.whereToThrow==0){
-           sr.setColor(Color.TEAL);
-           front.draw(sr);
-       } else if (Main.whereToThrow==1) {
-           sr.setColor(Color.TEAL);
-           middle.draw(sr);
-       } else{
-           sr.setColor(Color.TEAL);
-           back.draw(sr);
-       }
+        if (Main.whereToThrow==0){
+            sr.setColor(Color.TEAL);
+            front.draw(sr);
+        } else if (Main.whereToThrow==1) {
+            sr.setColor(Color.TEAL);
+            middle.draw(sr);
+        } else{
+            sr.setColor(Color.TEAL);
+            back.draw(sr);
+        }
         sr.setColor(Color.WHITE);
-       if (front.buttonPress(Gdx.input.getX(), 600-Gdx.input.getY())){
-           Main.whereToThrow=0;
+        if (front.buttonPress(Gdx.input.getX(), 600-Gdx.input.getY())){
+            Main.whereToThrow=0;
         }
         if (middle.buttonPress(Gdx.input.getX(), 600-Gdx.input.getY())){
             Main.whereToThrow=1;
@@ -233,7 +234,7 @@ public class TacticsScreen {
         font.draw(batch, "Advance -->", 1100,583);
         batch.end();
         if (nextScreen.buttonPress(Gdx.input.getX(),600-Gdx.input.getY())){
-            Main.screenCount++;
+            Main.screenCount=2;
         }
     }
 
