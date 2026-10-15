@@ -19,7 +19,7 @@ public class GameScreen {
             teams.easyInit(team2);
             //team2.add(new Player(5,5,5,5,"1",0,600,"p",true,1));
             for (int i = 0; i<15;i++){
-                team2.get(i).setY(team2.get(i).getY()+80);
+                team2.get(i).setY(team2.get(i).getY());
             }
             init=false;
         }
@@ -109,13 +109,24 @@ public class GameScreen {
         // return options = 0, 1, 2; 0 means carry, 1 means pass up the screen, 2 means pass down the screen
         int[] difficulty = new int[15];
         int count = 0;
-        int hasBall = 0, distance, lineBreak = 0, bestOption = -1, score=-1;
+        int hasBall = 0, distance, lineBreak = 0, bestOption = 0, score=-1;
         for (int i = 0; i<15; i++){
             if (team.get(i).isHasBall()){
                 hasBall = i;
                 break;
             }
         }
+        // get ball carriers score
+        for (int j = 0; j < opp.size(); j++) {
+            if (team.get(hasBall).getY() + 20 > opp.get(j).getY() && team.get(hasBall).getY() < opp.get(j).getY() + 20) {
+                lineBreak = ((team.get(hasBall).getStrength() + team.get(hasBall).getSpeed())  - opp.get(j).getTackling()) + 10;
+                break;
+            }
+        }
+        score = lineBreak;
+        bestOption = hasBall;
+
+        //
         for (int i = 0; i<opp.size(); i++) {
             //check if ball carrier has anyone in front of them
             if ((team.get(hasBall).getY()+20>opp.get(i).getY()&&team.get(hasBall).getY()<opp.get(i).getY()+20)) {
@@ -138,7 +149,7 @@ public class GameScreen {
             // calculate likelihood of a line break
             for (int j = 0; j<opp.size(); j++) {
                 if (team.get(i).getY()+20>opp.get(j).getY()&&team.get(i).getY()<opp.get(j).getY()+20){
-                    lineBreak = (team.get(i).getStrength()-opp.get(j).getTackling())+10;
+                    lineBreak = ((team.get(i).getStrength()+team.get(i).getSpeed())-opp.get(j).getTackling())+10;
                     break;
                 }
             }
@@ -154,6 +165,18 @@ public class GameScreen {
         if (team.get(bestOption).getY()<team.get(hasBall).getY()){
             return 2;
         }
+        if (bestOption==hasBall) {
+            return 0;
+        }
         return 0;
+    }
+
+    public boolean rucking (Player att, Player tackled){
+        if ((att.getY() +20 <= tackled.getY() +50 && att.getY() +20 >= tackled.getY()-30) || (att.getY() >= tackled.getY()-30 && att.getY() <= tackled.getY() +50)) {
+            if ((att.getX() <= tackled.getX() + 50 && att.getX() >= tackled.getX() - 20) || (att.getX() + 20 <= tackled.getX() - 20 && att.getX() + 20 >= tackled.getX() + 50)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
