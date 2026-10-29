@@ -13,6 +13,10 @@ public class GameScreen {
     private ShapeRenderer sr = new ShapeRenderer();
     private Random rand = new Random();
     private boolean init = true;
+    private int inRuckCount = 0;
+    //testing
+    Player p1 = new Player(5,5,5,5,"1",500,300,"1",true,1);
+    Player p2 = new Player(5,5,5,5,"1",530,320,"1",true,1);
     public void gameScreen (){
         if (init){
             teams.easyInit(team1);
@@ -77,7 +81,7 @@ public class GameScreen {
         sr.rect(977, 505,5,50);
         sr.end();
 
-        for (int i = 0; i<15; i++){
+        /*for (int i = 0; i<15; i++){
             int x, y;
             sr.begin(ShapeRenderer.ShapeType.Filled);
             x = team1.get(i).getX();
@@ -89,7 +93,10 @@ public class GameScreen {
             sr.end();
         }
         team1.get(7).setHasBall(true);
-        System.out.println(pass(team1,team2));
+        */
+        p1.draw(sr);
+        p2.draw(sr);
+        System.out.println(ruck(p2,p1));
     }
     //p1 is the ball carrier and p2 is the defender
     public Boolean tackled (Player p1, Player p2){
@@ -171,12 +178,17 @@ public class GameScreen {
         return 0;
     }
 
-    public boolean rucking (Player att, Player tackled){
-        if ((att.getY() +20 <= tackled.getY() +50 && att.getY() +20 >= tackled.getY()-30) || (att.getY() >= tackled.getY()-30 && att.getY() <= tackled.getY() +50)) {
-            if ((att.getX() <= tackled.getX() + 50 && att.getX() >= tackled.getX() - 20) || (att.getX() + 20 <= tackled.getX() - 20 && att.getX() + 20 >= tackled.getX() + 50)) {
+    public boolean ruck (Player att, Player tackled){
+        // use in ruck count to check if there are 2 players in the ruck already if so then ignore the out of this.
+        if ((att.getY() <= tackled.getY() +40 && att.getY() +20 >= tackled.getY()-20)){
+            if (att.getX() <= tackled.getX() + 40 && att.getX() + 20 >= p2.getX()-20 ){
                 return true;
             }
         }
         return false;
+    }
+
+    public ArrayList <Player> attackFormation (ArrayList <Player> defence){
+
     }
 }
