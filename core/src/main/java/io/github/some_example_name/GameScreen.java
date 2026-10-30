@@ -1,7 +1,6 @@
 package io.github.some_example_name;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
 import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.Random;
@@ -188,7 +187,46 @@ public class GameScreen {
         return false;
     }
 
-    public ArrayList <Player> attackFormation (ArrayList <Player> defence){
+    public ArrayList <Player> attackFormation (ArrayList <Player> attack) {
+        int hasBall = -1;
+        int leftRight = -1; //0=up 1=down
+        // find player with the ball
+        for (int i = 0; i < 15; i++) {
+            if (attack.get(i).isHasBall()) {
+                hasBall = i;
+                break;
+            }
+        }
+        // increment each player back to be in the correct position
+        for (int i = 0; i < 15; i++) {
+            //first find if player is on left or right of the ball carrier
+            if (attack.get(i).getY() > attack.get(hasBall).getY()) {
+                leftRight = 0;
+            } else {
+                leftRight = 1;
+            }
 
+            if (i == hasBall){
+            }
+            // find player to the left of them
+            else if (leftRight == 1){
+                for (int j=0;j<15;j++){
+                    int temp = hasBall;
+                    if (Math.abs((attack.get(i).getY()-attack.get(j).getY()))<Math.abs((attack.get(i).getY()-attack.get(temp).getY()))){
+                        temp = j;
+                    }
+                }
+            }
+            // find player to right of them
+            else if (leftRight == 0){
+                for (int j=0;j<15;j++){
+                    int temp = hasBall;
+                    if (Math.abs((attack.get(i).getY()-attack.get(j).getY()))<Math.abs((attack.get(i).getY()-attack.get(temp).getY()))){
+                        temp = j;
+                    }
+                }
+            }
+        }
+        return attack;
     }
 }
