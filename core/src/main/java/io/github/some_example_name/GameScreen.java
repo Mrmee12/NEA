@@ -189,7 +189,9 @@ public class GameScreen {
 
     public ArrayList <Player> attackFormation (ArrayList <Player> attack) {
         int hasBall = -1;
-        int leftRight = -1; //0=up 1=down
+        ArrayList <Player> up = new ArrayList<>();
+        ArrayList <Player> down = new ArrayList<>();
+        Player temp;
         // find player with the ball
         for (int i = 0; i < 15; i++) {
             if (attack.get(i).isHasBall()) {
@@ -201,29 +203,27 @@ public class GameScreen {
         for (int i = 0; i < 15; i++) {
             //first find if player is on left or right of the ball carrier
             if (attack.get(i).getY() > attack.get(hasBall).getY()) {
-                leftRight = 0;
+                up.add(attack.get(i));
             } else {
-                leftRight = 1;
+                down.add(attack.get(i));
             }
-
-            if (i == hasBall){
-            }
-            // find player to the left of them
-            else if (leftRight == 1){
-                for (int j=0;j<15;j++){
-                    int temp = hasBall;
-                    if (Math.abs((attack.get(i).getY()-attack.get(j).getY()))<Math.abs((attack.get(i).getY()-attack.get(temp).getY()))){
-                        temp = j;
-                    }
+        }
+        //sort the lists via how close they are to the ball carrier
+        for (int i=0; i<up.size(); i++){
+            for (int j=0; j<up.size();j++){
+                if (Math.abs(attack.get(hasBall).getY()-up.get(i).getY())>Math.abs(attack.get(hasBall).getY()-up.get(j).getY())){
+                    temp = up.get(i);
+                    up.set(i,up.get(j));
+                    up.set(j,temp);
                 }
             }
-            // find player to right of them
-            else if (leftRight == 0){
-                for (int j=0;j<15;j++){
-                    int temp = hasBall;
-                    if (Math.abs((attack.get(i).getY()-attack.get(j).getY()))<Math.abs((attack.get(i).getY()-attack.get(temp).getY()))){
-                        temp = j;
-                    }
+        }
+        for (int i=0; i<down.size(); i++){
+            for (int j=0; j<down.size();j++){
+                if (Math.abs(attack.get(hasBall).getY()-down.get(i).getY())>Math.abs(attack.get(hasBall).getY()-down.get(j).getY())){
+                    temp = down.get(i);
+                    down.set(i,up.get(j));
+                    down.set(j,temp);
                 }
             }
         }
