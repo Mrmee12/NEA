@@ -80,22 +80,12 @@ public class GameScreen {
         sr.rect(977, 505,5,50);
         sr.end();
 
-        /*for (int i = 0; i<15; i++){
-            int x, y;
-            sr.begin(ShapeRenderer.ShapeType.Filled);
-            x = team1.get(i).getX();
-            y = team1.get(i).getY();
-            sr.rect(x,y,20,20);
-            x = team2.get(i).getX()+300;
-            y = team2.get(i).getY();
-            sr.rect(x,y,20,20);
-            sr.end();
+        for (int i = 0; i<15; i++){
+            team1.get(i).draw(sr);
         }
         team1.get(7).setHasBall(true);
-        */
-        p1.draw(sr);
-        p2.draw(sr);
-        System.out.println(ruck(p2,p1));
+        attackFormation(team1,0);
+
     }
     //p1 is the ball carrier and p2 is the defender
     public Boolean tackled (Player p1, Player p2){
@@ -187,7 +177,7 @@ public class GameScreen {
         return false;
     }
 
-    public ArrayList <Player> attackFormation (ArrayList <Player> attack) {
+    public ArrayList <Player> attackFormation (ArrayList <Player> attack, int side) {
         int hasBall = -1;
         ArrayList <Player> up = new ArrayList<>();
         ArrayList <Player> down = new ArrayList<>();
@@ -222,8 +212,60 @@ public class GameScreen {
             for (int j=0; j<down.size();j++){
                 if (Math.abs(attack.get(hasBall).getY()-down.get(i).getY())>Math.abs(attack.get(hasBall).getY()-down.get(j).getY())){
                     temp = down.get(i);
-                    down.set(i,up.get(j));
+                    down.set(i,down.get(j));
                     down.set(j,temp);
+
+                }
+            }
+        }
+        up.add(0,attack.get(hasBall));
+        down.add(0,attack.get(hasBall));
+
+        // index players back by their speed
+        if (side == 0) {
+            for (int i = 1; i < up.size(); i++) {
+                if (up.get(i).getX() > up.get(i - 1).getX()){
+                }else {
+                    up.get(i).setX(up.get(i).getX()-up.get(i).getSpeed());
+                }
+            }
+
+            for (int i = 1; i < down.size(); i++) {
+                if (down.get(i).getX() < down.get(i - 1).getX()){
+                }else {
+                    down.get(i).setX(down.get(i).getX()-down.get(i).getSpeed());
+                }
+            }
+        }
+
+        if (side == 1) {
+            for (int i = 1; i < up.size(); i++) {
+                if (up.get(i).getX() > up.get(i - 1).getX()){
+                }else {
+                    up.get(i).setX(up.get(i).getX()+up.get(i).getSpeed());
+                }
+            }
+
+            for (int i = 1; i < down.size(); i++) {
+                if (down.get(i).getX() < down.get(i - 1).getX()){
+                }else {
+                    down.get(i).setX(down.get(i).getX()+down.get(i).getSpeed());
+                }
+            }
+        }
+        up.remove(0);
+        down.remove(0);
+
+        //update all values
+        for (int i = 0; i<attack.size(); i++){
+            for (int j=0; j<up.size(); j++){
+                if (attack.get(i).getId() == up.get(j).getId()){
+                    attack.set(i, up.get(j));
+                }
+            }
+            for (int j=0; j<down.size(); j++){
+                if (attack.get(i).getId() == down.get(j).getId()){
+                    attack.set(i, down.get(j));
                 }
             }
         }
