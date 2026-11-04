@@ -79,12 +79,17 @@ public class GameScreen {
         sr.rect(765, 505,5,50);
         sr.rect(977, 505,5,50);
         sr.end();
-
-        for (int i = 0; i<15; i++){
-            team1.get(i).draw(sr);
-        }
         team1.get(7).setHasBall(true);
-        attackFormation(team1,0);
+        for (int i = 0; i<15; i++){
+            if (team1.get(i).isHasBall()) {
+                sr.setColor(Color.GREEN);
+            }
+            team1.get(i).draw(sr);
+            sr.setColor(Color.WHITE);
+            team2.get(i).draw(sr);
+        }
+        attackFormation(team1, 0);
+        defensiveFormation(team1, team2, 1);
 
     }
     //p1 is the ball carrier and p2 is the defender
@@ -179,6 +184,7 @@ public class GameScreen {
 
     public ArrayList <Player> attackFormation (ArrayList <Player> attack, int side) {
         int hasBall = -1;
+        int withballID = -1;
         ArrayList <Player> up = new ArrayList<>();
         ArrayList <Player> down = new ArrayList<>();
         Player temp;
@@ -186,6 +192,7 @@ public class GameScreen {
         for (int i = 0; i < 15; i++) {
             if (attack.get(i).isHasBall()) {
                 hasBall = i;
+                withballID = attack.get(i).getId();
                 break;
             }
         }
@@ -194,14 +201,15 @@ public class GameScreen {
             //first find if player is on left or right of the ball carrier
             if (attack.get(i).getY() > attack.get(hasBall).getY()) {
                 up.add(attack.get(i));
-            } else {
+            }
+            else {
                 down.add(attack.get(i));
             }
         }
         //sort the lists via how close they are to the ball carrier
         for (int i=0; i<up.size(); i++){
             for (int j=0; j<up.size();j++){
-                if (Math.abs(attack.get(hasBall).getY()-up.get(i).getY())>Math.abs(attack.get(hasBall).getY()-up.get(j).getY())){
+                if (Math.abs(attack.get(hasBall).getY()-up.get(i).getY())<Math.abs(attack.get(hasBall).getY()-up.get(j).getY())){
                     temp = up.get(i);
                     up.set(i,up.get(j));
                     up.set(j,temp);
@@ -210,7 +218,7 @@ public class GameScreen {
         }
         for (int i=0; i<down.size(); i++){
             for (int j=0; j<down.size();j++){
-                if (Math.abs(attack.get(hasBall).getY()-down.get(i).getY())>Math.abs(attack.get(hasBall).getY()-down.get(j).getY())){
+                if (Math.abs(attack.get(hasBall).getY()-down.get(i).getY())<Math.abs(attack.get(hasBall).getY()-down.get(j).getY())){
                     temp = down.get(i);
                     down.set(i,down.get(j));
                     down.set(j,temp);
@@ -218,38 +226,66 @@ public class GameScreen {
                 }
             }
         }
+        //remove the ball carrier from the lists
+        for (int i = 0; i<up.size();i++){
+            if(up.get(i).getId()==withballID){
+                up.remove(i);
+            }
+        }
+        for (int i = 0; i<down.size();i++){
+            if(down.get(i).getId()==withballID){
+                down.remove(i);
+            }
+        }
+
         up.add(0,attack.get(hasBall));
         down.add(0,attack.get(hasBall));
 
         // index players back by their speed
         if (side == 0) {
             for (int i = 1; i < up.size(); i++) {
-                if (up.get(i).getX() > up.get(i - 1).getX()){
-                }else {
-                    up.get(i).setX(up.get(i).getX()-up.get(i).getSpeed());
+                if (up.get(i).getX()+15 < up.get(i - 1).getX()){
+                }
+                else if (up.get(i).getX()+20 < up.get(i - 1).getX()){
+                    up.get(i).setX(up.get(i).getX()+up.get(i).getSpeed()/2);
+                }
+                else {
+                    up.get(i).setX(up.get(i).getX()-up.get(i).getSpeed()/2);
                 }
             }
 
             for (int i = 1; i < down.size(); i++) {
-                if (down.get(i).getX() < down.get(i - 1).getX()){
-                }else {
-                    down.get(i).setX(down.get(i).getX()-down.get(i).getSpeed());
+                if (down.get(i).getX()+15 < down.get(i - 1).getX()){
+                }
+                else if (up.get(i).getX()+20 < up.get(i - 1).getX()){
+                    up.get(i).setX(up.get(i).getX()+up.get(i).getSpeed()/2);
+                }
+                else {
+                    down.get(i).setX(down.get(i).getX()-down.get(i).getSpeed()/2);
                 }
             }
         }
 
         if (side == 1) {
             for (int i = 1; i < up.size(); i++) {
-                if (up.get(i).getX() > up.get(i - 1).getX()){
-                }else {
-                    up.get(i).setX(up.get(i).getX()+up.get(i).getSpeed());
+                if (up.get(i).getX()-15 > up.get(i - 1).getX()){
+                }
+                else if (up.get(i).getX()-20 > up.get(i - 1).getX()){
+                    up.get(i).setX(up.get(i).getX()-up.get(i).getSpeed()/2);
+                }
+                else {
+                    up.get(i).setX(up.get(i).getX()+up.get(i).getSpeed()/2);
                 }
             }
 
             for (int i = 1; i < down.size(); i++) {
-                if (down.get(i).getX() < down.get(i - 1).getX()){
-                }else {
-                    down.get(i).setX(down.get(i).getX()+down.get(i).getSpeed());
+                if (down.get(i).getX()-15 > down.get(i - 1).getX()){
+                }
+                else {
+                    down.get(i).setX(down.get(i).getX()+down.get(i).getSpeed()/2);
+                }
+                if (down.get(i).getX()-20 > down.get(i - 1).getX()){
+                    down.get(i).setX(down.get(i).getX()-down.get(i).getSpeed()/2);
                 }
             }
         }
@@ -269,6 +305,44 @@ public class GameScreen {
                 }
             }
         }
+
         return attack;
+    }
+
+    public ArrayList<Player> defensiveFormation(ArrayList <Player> attack,ArrayList <Player> defense, int side) {
+        int forwardX = -1, backwardsX = 100000;
+
+        // find most far forward attacker
+        for (int i = 0; i<attack.size(); i++){
+            if (attack.get(i).getX() > forwardX){
+                forwardX = attack.get(i).getX();
+            }
+            //find furthest back attacker
+            if (attack.get(i).getX()<backwardsX){
+                backwardsX = attack.get(i).getX();
+            }
+        }
+
+        //move them to where they need to be
+        for (int i = 0; i<defense.size(); i++){
+            if (side==0){
+                if (defense.get(i).getX() > backwardsX - 30){
+                    defense.get(i).setX(defense.get(i).getX() - defense.get(i).getSpeed()/2);
+                }
+                if (defense.get(i).getX() < backwardsX - 70){
+                    defense.get(i).setX(defense.get(i).getX() + defense.get(i).getSpeed()/2);
+                }
+            }
+            if (side==1){
+                if (defense.get(i).getX() < forwardX + 30){
+                    defense.get(i).setX(defense.get(i).getX() + defense.get(i).getSpeed()/2);
+                }
+                if (defense.get(i).getX() > forwardX + 70){
+                    defense.get(i).setX(defense.get(i).getX() - defense.get(i).getSpeed()/2);
+                }
+            }
+        }
+
+        return defense;
     }
 }
