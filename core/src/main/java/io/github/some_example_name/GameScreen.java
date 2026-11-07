@@ -22,7 +22,8 @@ public class GameScreen {
             teams.easyInit(team2);
             //team2.add(new Player(5,5,5,5,"1",0,600,"p",true,1));
             for (int i = 0; i<15;i++){
-                team2.get(i).setY(team2.get(i).getY());
+                team2.get(i).setX(team2.get(i).getX()+50);
+                team2.get(i).setY(team2.get(i).getY()+50);
             }
             init=false;
         }
@@ -88,8 +89,8 @@ public class GameScreen {
             sr.setColor(Color.WHITE);
             team2.get(i).draw(sr);
         }
-        attackFormation(team1, 0);
-        defensiveFormation(team1, team2, 1);
+        //pass(team1,team2);
+        System.out.println(pass(team1, team2));
 
     }
     //p1 is the ball carrier and p2 is the defender
@@ -117,10 +118,10 @@ public class GameScreen {
                 break;
             }
         }
-        // get ball carriers score
-        for (int j = 0; j < opp.size(); j++) {
-            if (team.get(hasBall).getY() + 20 > opp.get(j).getY() && team.get(hasBall).getY() < opp.get(j).getY() + 20) {
-                lineBreak = ((team.get(hasBall).getStrength() + team.get(hasBall).getSpeed())  - opp.get(j).getTackling()) + 10;
+        // get ball carriers score so if their score is the best they will run it in
+        for (int i = 0; i < opp.size(); i++) {
+            if ((team.get(hasBall).getY() +20 <= opp.get(i).getY() +20 && team.get(hasBall).getY() +20 >= opp.get(i).getY()) || (team.get(hasBall).getY() >= opp.get(i).getY() && team.get(hasBall).getY() <= opp.get(i).getY() +20)){
+                lineBreak = ((team.get(hasBall).getStrength() + team.get(hasBall).getSpeed())  - opp.get(i).getTackling()) + 10;
                 break;
             }
         }
@@ -145,16 +146,17 @@ public class GameScreen {
         //calculate easiest route
         for (int i = 0; i<team.size();i++){
             //calculate how far away from the player they are
-            distance = Math.abs(team.get(i).getY()-team.get(hasBall).getY());
+            distance = Math.abs(team.get(hasBall).getY()-team.get(i).getY());
 
             // calculate likelihood of a line break
             for (int j = 0; j<opp.size(); j++) {
-                if (team.get(i).getY()+20>opp.get(j).getY()&&team.get(i).getY()<opp.get(j).getY()+20){
+                if ((team.get(i).getY()+20>opp.get(j).getY()&&team.get(i).getY()<opp.get(j).getY()+20)) {
                     lineBreak = ((team.get(i).getStrength()+team.get(i).getSpeed())-opp.get(j).getTackling())+10;
                     break;
                 }
             }
-            if ((lineBreak-distance)<score){
+            //System.out.println(lineBreak);
+            if ((lineBreak+distance)>score){
                 score = lineBreak-distance;
                 bestOption = i;
             }
@@ -257,8 +259,8 @@ public class GameScreen {
             for (int i = 1; i < down.size(); i++) {
                 if (down.get(i).getX()+15 < down.get(i - 1).getX()){
                 }
-                else if (up.get(i).getX()+20 < up.get(i - 1).getX()){
-                    up.get(i).setX(up.get(i).getX()+up.get(i).getSpeed()/2);
+                else if (down.get(i).getX()+20 < down.get(i - 1).getX()){
+                    down.get(i).setX(up.get(i).getX()+down.get(i).getSpeed()/2);
                 }
                 else {
                     down.get(i).setX(down.get(i).getX()-down.get(i).getSpeed()/2);
