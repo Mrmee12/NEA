@@ -6,24 +6,27 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameScreen {
-    private ArrayList <Player> team1 = new ArrayList<Player>();
-    private ArrayList <Player> team2 = new ArrayList<Player>();
+    private ArrayList <Player> userTeam = new ArrayList<Player>();
+    private ArrayList <Player> opp = new ArrayList<Player>();
     private Teams teams = new Teams();
     private ShapeRenderer sr = new ShapeRenderer();
     private Random rand = new Random();
-    private boolean init = true;
-    private int inRuckCount = 0;
+    private boolean init = true, kickoff = true;
+    private int inRuckCount = 0, x = 580, y = 520;
     //testing
     Player p1 = new Player(5,5,5,5,"1",500,300,"1",true,1);
     Player p2 = new Player(5,5,5,5,"1",530,320,"1",true,1);
     public void gameScreen (){
+        //fill teams with players
         if (init){
-            teams.easyInit(team1);
-            teams.easyInit(team2);
+            //userTeam = Main.starting;
+            teams.easyInit(userTeam);
+            teams.easyInit(opp);
+            /*
             for (int i = 0; i<15;i++){
                 team2.get(i).setX(team2.get(i).getX()+50);
                 team2.get(i).setY(team2.get(i).getY());
-            }
+            }*/
             init=false;
         }
 
@@ -79,7 +82,63 @@ public class GameScreen {
         sr.rect(765, 505,5,50);
         sr.rect(977, 505,5,50);
         sr.end();
+        /*for(int i = 0; i<15; i++){
+            team1.get(i).draw(sr);
+            team2.get(i).draw(sr);
+        }
+        team1.get(7).setHasBall(true);
+        attackFormation(team1, 0);
+        defensiveFormation(team1,team2, 1);*/
 
+        // simulation of the game
+        //setup kickoff
+        if (kickoff){
+            userTeam.get(0).setX(560);
+            userTeam.get(0).setY(520);
+            userTeam.get(1).setX(560);
+            userTeam.get(1).setY(310);
+            userTeam.get(2).setX(560);
+            userTeam.get(2).setY(90);
+            //
+            userTeam.get(3).setX(360);
+            userTeam.get(3).setY(520);
+            userTeam.get(4).setX(360);
+            userTeam.get(4).setY(415);
+            userTeam.get(5).setX(360);
+            userTeam.get(5).setY(190);
+            userTeam.get(6).setX(360);
+            userTeam.get(6).setY(60);
+            //
+            userTeam.get(7).setX(200);
+            userTeam.get(7).setY(305);
+            //
+            userTeam.get(8).setX(460);
+            userTeam.get(8).setY(470);
+            userTeam.get(9).setX(460);
+            userTeam.get(9).setY(330);
+            userTeam.get(10).setX(460);
+            userTeam.get(10).setY(130);
+            userTeam.get(11).setX(360);
+            userTeam.get(11).setY(300);
+            userTeam.get(12).setX(270);
+            userTeam.get(12).setY(510);
+            userTeam.get(13).setX(270);
+            userTeam.get(13).setY(310);
+            userTeam.get(14).setX(270);
+            userTeam.get(14).setY(90);
+
+            kickoff = false;
+        }
+        userTeam.get(7).setHasBall(true);
+        attackFormation(userTeam, 1);
+        // draw players
+        for (int i = 0; i<userTeam.size(); i++){
+            sr.setColor(Color.WHITE);
+            userTeam.get(i).draw(sr);
+
+            sr.setColor(Color.CYAN);
+            opp.get(i).draw(sr);
+        }
     }
     //p1 is the ball carrier and p2 is the defender
     public Boolean tackled (Player p1, Player p2){
@@ -114,7 +173,7 @@ public class GameScreen {
                 break;
             }
         }
-        score = lineBreak+10;9
+        score = lineBreak+10;
         bestOption = hasBall;
 
         //find out best option
@@ -237,6 +296,13 @@ public class GameScreen {
                 else {
                     up.get(i).setX(up.get(i).getX()-up.get(i).getSpeed()/2);
                 }
+                if (up.get(i).getX()+20 < up.get(i-1).getX()-15){
+                    up.get(i).setX(up.get(i).getX()+up.get(i).getSpeed()/2);
+                }
+
+                if (up.get(i).getY() < up.get(i-1).getY()+20){
+                    up.get(i).setY(up.get(i).getY()+up.get(i).getSpeed()/2);
+                }
             }
 
             for (int i = 1; i < down.size(); i++) {
@@ -247,6 +313,13 @@ public class GameScreen {
                 }
                 else {
                     down.get(i).setX(down.get(i).getX()-down.get(i).getSpeed()/2);
+                }
+                if (down.get(i).getX()+20 < down.get(i-1).getX()-15){
+                    down.get(i).setX(down.get(i).getX()+down.get(i).getSpeed()/2);
+                }
+
+                if (down.get(i).getY()+20 > down.get(i-1).getY()){
+                    down.get(i).setY(down.get(i).getY()-down.get(i).getSpeed()/2);
                 }
             }
         }
@@ -261,6 +334,13 @@ public class GameScreen {
                 else {
                     up.get(i).setX(up.get(i).getX()+up.get(i).getSpeed()/2);
                 }
+                if (up.get(i).getX()-20 > up.get(i - 1).getX()+15){
+                    up.get(i).setX(up.get(i).getX()-up.get(i).getSpeed()/2);
+                }
+
+                if (up.get(i).getY() > up.get(i-1).getY()+20){
+                    up.get(i).setY(up.get(i).getY()-up.get(i).getSpeed()/2);
+                }
             }
 
             for (int i = 1; i < down.size(); i++) {
@@ -269,8 +349,12 @@ public class GameScreen {
                 else {
                     down.get(i).setX(down.get(i).getX()+down.get(i).getSpeed()/2);
                 }
-                if (down.get(i).getX()-20 > down.get(i - 1).getX()){
+                if (down.get(i).getX()-20 > down.get(i - 1).getX()+15){
                     down.get(i).setX(down.get(i).getX()-down.get(i).getSpeed()/2);
+                }
+
+                if (down.get(i).getY()+20 < down.get(i-1).getY()){
+                    down.get(i).setY(down.get(i).getY()+down.get(i).getSpeed()/2);
                 }
             }
         }
