@@ -1,9 +1,12 @@
 package io.github.some_example_name;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import jdk.jfr.internal.test.WhiteBox;
+
 import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.WeakHashMap;
 
 public class GameScreen {
     private ArrayList <Player> userTeam = new ArrayList<Player>();
@@ -11,8 +14,8 @@ public class GameScreen {
     private Teams teams = new Teams();
     private ShapeRenderer sr = new ShapeRenderer();
     private Random rand = new Random();
-    private boolean init = true, kickoff = true;
-    private int inRuckCount = 0, x = 580, y = 520;
+    private boolean init = true, kickoff = true, go = true;
+    private int inRuckCount = 0, x = 500, y = 520, temp = 0, kickPlayer, whereKick, bX = 620, bY = 300, count = 0, teamwithball = -1, passDir, playerWithBall;
     //testing
     Player p1 = new Player(5,5,5,5,"1",500,300,"1",true,1);
     Player p2 = new Player(5,5,5,5,"1",530,320,"1",true,1);
@@ -93,44 +96,123 @@ public class GameScreen {
         // simulation of the game
         //setup kickoff
         if (kickoff){
-            userTeam.get(0).setX(560);
-            userTeam.get(0).setY(520);
-            userTeam.get(1).setX(560);
-            userTeam.get(1).setY(310);
-            userTeam.get(2).setX(560);
-            userTeam.get(2).setY(90);
-            //
-            userTeam.get(3).setX(360);
-            userTeam.get(3).setY(520);
-            userTeam.get(4).setX(360);
-            userTeam.get(4).setY(415);
-            userTeam.get(5).setX(360);
-            userTeam.get(5).setY(190);
-            userTeam.get(6).setX(360);
-            userTeam.get(6).setY(60);
-            //
-            userTeam.get(7).setX(200);
-            userTeam.get(7).setY(305);
-            //
-            userTeam.get(8).setX(460);
-            userTeam.get(8).setY(470);
-            userTeam.get(9).setX(460);
-            userTeam.get(9).setY(330);
-            userTeam.get(10).setX(460);
-            userTeam.get(10).setY(130);
-            userTeam.get(11).setX(360);
-            userTeam.get(11).setY(300);
-            userTeam.get(12).setX(270);
-            userTeam.get(12).setY(510);
-            userTeam.get(13).setX(270);
-            userTeam.get(13).setY(310);
-            userTeam.get(14).setX(270);
-            userTeam.get(14).setY(90);
+            count = 0;
+            x = 500;
+            y = 520;
+            for (int i = 0; i<3;i++){
+                userTeam.get(i).setX(x);
+                userTeam.get(i).setY(y);
+                y-=240;
+            }
+            x-=200;
+            y=520;
+            for (int i=3; i<7; i++){
+                userTeam.get(i).setX(x);
+                userTeam.get(i).setY(y);
+                y-=155;
+            }
+            x-=130;
+            y=280;
+            userTeam.get(7).setX(x);
+            userTeam.get(7).setY(y);
+            y=450;
+            x=400;
+            for (int i=8; i<11; i++){
+                userTeam.get(i).setX(x);
+                userTeam.get(i).setY(y);
+                y-=155;
+            }
+            x=225;
+            y=470;
+            for (int i=11; i<15; i++){
+                userTeam.get(i).setX(x);
+                userTeam.get(i).setY(y);
+                y-=130;
+            }
 
-            kickoff = false;
+            // find the best kicker in opp
+            for (int i = 0; i<opp.size(); i++){
+                if (opp.get(i).getKicking() > temp){
+                    temp = opp.get(i).getKicking();
+                    kickPlayer = i;
+                }
+            }
+            opp.get(kickPlayer).setHasBall(true);
+            opp.get(7).setY(opp.get(kickPlayer).getY());
+            opp.get(7).setX(opp.get(kickPlayer).getX());
+            opp.get(kickPlayer).setY(300);
+            opp.get(kickPlayer).setX(620);
+
+            //start game
+            whereKick = rand.nextInt(1,4);
+            switch (whereKick){
+                case 1:
+                    x = userTeam.get(0).getX();
+                    y = userTeam.get(0).getY();
+                    whereKick=0;
+                    break;
+                case 2:
+                    x = userTeam.get(3).getX();
+                    y = userTeam.get(3).getY();
+                    whereKick=3;
+                    break;
+                case 3:
+                    x = userTeam.get(5).getX();
+                    y = userTeam.get(5).getY();
+                    whereKick = 5;
+                    break;
+            }
+            kickoff=false;
         }
-        userTeam.get(7).setHasBall(true);
-        attackFormation(userTeam, 1);
+        //wait 2 secs before game start
+        if (go) {
+            if (count > 120) {
+                opp.get(kickPlayer).setHasBall(false);
+                userTeam.get(whereKick).setHasBall(true);
+                go=false;
+            }
+        }
+
+        if(count>120){
+            //step 1 = determine which team has the ball
+            for (int i = 0; i<userTeam.size(); i++){
+                if (userTeam.get(i).isHasBall()){
+                    teamwithball = 0;
+                    break;
+                }
+                if (opp.get(i).isHasBall()){
+                    teamwithball = 1;
+                    break;
+                }
+            }
+
+            //make teams do right move
+            if (teamwithball == 0){
+                // find who has ball
+                for (int i = 0; i<15; i++){
+                    if (userTeam.get(i).isHasBall()){
+                        playerWithBall = i;
+                        break;
+                    }
+                }
+
+                attackFormation(userTeam,0);
+                defensiveFormation(userTeam, opp,1);
+
+                //check pass
+                passDir = pass(userTeam, opp);
+
+                if (userTeam.get(playerWithBall).getY() > 525 || userTeam.get(playerWithBall).getY() < 70 || passDir==0){
+                    userTeam.get(playerWithBall).setY(userTeam.get(playerWithBall).getY()+userTeam.get(playerWithBall).getSpeed()/2);
+                }
+                if (passDir==1){
+                    userTeam.get(playerWithBall).setHasBall(false);
+
+                }
+            }
+        }
+
+
         // draw players
         for (int i = 0; i<userTeam.size(); i++){
             sr.setColor(Color.WHITE);
@@ -138,7 +220,19 @@ public class GameScreen {
 
             sr.setColor(Color.CYAN);
             opp.get(i).draw(sr);
+
+            if (opp.get(i).isHasBall()){
+                sr.setColor(Color.RED);
+                opp.get(i).draw(sr);
+                sr.setColor(Color.WHITE);
+            }
+            if (userTeam.get(i).isHasBall()){
+                sr.setColor(Color.RED);
+                userTeam.get(i).draw(sr);
+                sr.setColor(Color.WHITE);
+            }
         }
+        count++;
     }
     //p1 is the ball carrier and p2 is the defender
     public Boolean tackled (Player p1, Player p2){
@@ -300,7 +394,7 @@ public class GameScreen {
                     up.get(i).setX(up.get(i).getX()+up.get(i).getSpeed()/2);
                 }
 
-                if (up.get(i).getY() < up.get(i-1).getY()+20){
+                if (up.get(i).getY()-10 < up.get(i-1).getY()+20){
                     up.get(i).setY(up.get(i).getY()+up.get(i).getSpeed()/2);
                 }
             }
@@ -318,7 +412,7 @@ public class GameScreen {
                     down.get(i).setX(down.get(i).getX()+down.get(i).getSpeed()/2);
                 }
 
-                if (down.get(i).getY()+20 > down.get(i-1).getY()){
+                if (down.get(i).getY()+20 > down.get(i-1).getY()-10){
                     down.get(i).setY(down.get(i).getY()-down.get(i).getSpeed()/2);
                 }
             }
@@ -338,7 +432,7 @@ public class GameScreen {
                     up.get(i).setX(up.get(i).getX()-up.get(i).getSpeed()/2);
                 }
 
-                if (up.get(i).getY() > up.get(i-1).getY()+20){
+                if (up.get(i).getY()-10 > up.get(i-1).getY()+20){
                     up.get(i).setY(up.get(i).getY()-up.get(i).getSpeed()/2);
                 }
             }
@@ -353,7 +447,7 @@ public class GameScreen {
                     down.get(i).setX(down.get(i).getX()-down.get(i).getSpeed()/2);
                 }
 
-                if (down.get(i).getY()+20 < down.get(i-1).getY()){
+                if (down.get(i).getY()+20 < down.get(i-1).getY()-10){
                     down.get(i).setY(down.get(i).getY()+down.get(i).getSpeed()/2);
                 }
             }
