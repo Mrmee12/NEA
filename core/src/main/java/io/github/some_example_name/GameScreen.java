@@ -11,11 +11,12 @@ import java.util.WeakHashMap;
 public class GameScreen {
     private ArrayList <Player> userTeam = new ArrayList<Player>();
     private ArrayList <Player> opp = new ArrayList<Player>();
+    private ArrayList <Integer> tempList = new ArrayList<Integer>();
     private Teams teams = new Teams();
     private ShapeRenderer sr = new ShapeRenderer();
     private Random rand = new Random();
-    private boolean init = true, kickoff = true, go = true;
-    private int inRuckCount = 0, x = 500, y = 520, temp = 0, kickPlayer, whereKick, bX = 620, bY = 300, count = 0, teamwithball = -1, passDir, playerWithBall;
+    private boolean init = true, kickoff = true, go = true, inFormation = false, tackled = false;
+    private int inRuckCount = 0, x = 500, y = 520, temp = 0, kickPlayer, whereKick, bX = 620, bY = 300, count = 0, teamwithball = -1, passDir, playerWithBall, formationCount;
     //testing
     Player p1 = new Player(5,5,5,5,"1",500,300,"1",true,1);
     Player p2 = new Player(5,5,5,5,"1",530,320,"1",true,1);
@@ -196,19 +197,38 @@ public class GameScreen {
                     }
                 }
 
-                attackFormation(userTeam,0);
-                defensiveFormation(userTeam, opp,1);
+                if (!inFormation) {
+                    userTeam.get(playerWithBall).setX(userTeam.get(playerWithBall).getX()+2);
+                    for (int i=0; i<userTeam.size();i++){
+                        tempList.add(userTeam.get(i).getX());
+                    }
 
-                //check pass
-                passDir = pass(userTeam, opp);
+                    attackFormation(userTeam, 0);
+                    defensiveFormation(userTeam,opp,1);
 
-                if (userTeam.get(playerWithBall).getY() > 525 || userTeam.get(playerWithBall).getY() < 70 || passDir==0){
-                    userTeam.get(playerWithBall).setY(userTeam.get(playerWithBall).getY()+userTeam.get(playerWithBall).getSpeed()/2);
+                    for (int i=0; i<userTeam.size();i++){
+                        if(userTeam.get(i).getX() == tempList.get(i)){
+                            formationCount ++;
+                        }
+                    }
+                    // check if in formation
+                    if (formationCount == 15){
+                        inFormation = true;
+                    }
+                    formationCount = 0;
+                    tempList.clear();
+
+                    for (int i = 0; i<opp.size(); i++){
+                        if (tackled(userTeam.get(playerWithBall),opp.get(i))){
+                            System.out.println("p");
+                        }
+                    }
+
                 }
-                if (passDir==1){
-                    userTeam.get(playerWithBall).setHasBall(false);
-
+                else{
+                    System.out.println("ok");
                 }
+
             }
         }
 
@@ -489,18 +509,18 @@ public class GameScreen {
         //move them to where they need to be
         for (int i = 0; i<defense.size(); i++){
             if (side==0){
-                if (defense.get(i).getX() > backwardsX - 30){
+                if (defense.get(i).getX() > backwardsX+20){
                     defense.get(i).setX(defense.get(i).getX() - defense.get(i).getSpeed()/2);
                 }
-                if (defense.get(i).getX() < backwardsX - 70){
+                if (defense.get(i).getX() < backwardsX-20 ){
                     defense.get(i).setX(defense.get(i).getX() + defense.get(i).getSpeed()/2);
                 }
             }
             if (side==1){
-                if (defense.get(i).getX() < forwardX + 30){
+                if (defense.get(i).getX() < forwardX+20 ){
                     defense.get(i).setX(defense.get(i).getX() + defense.get(i).getSpeed()/2);
                 }
-                if (defense.get(i).getX() > forwardX + 70){
+                if (defense.get(i).getX() > forwardX-20 ){
                     defense.get(i).setX(defense.get(i).getX() - defense.get(i).getSpeed()/2);
                 }
             }
