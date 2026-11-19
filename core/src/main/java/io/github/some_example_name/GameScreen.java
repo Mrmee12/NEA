@@ -198,35 +198,47 @@ public class GameScreen {
                 }
 
                 if (!inFormation) {
-                    userTeam.get(playerWithBall).setX(userTeam.get(playerWithBall).getX()+2);
-                    for (int i=0; i<userTeam.size();i++){
-                        tempList.add(userTeam.get(i).getX());
-                    }
-
-                    attackFormation(userTeam, 0);
-                    defensiveFormation(userTeam,opp,1);
-
-                    for (int i=0; i<userTeam.size();i++){
-                        if(userTeam.get(i).getX() == tempList.get(i)){
-                            formationCount ++;
+                    for (int i = 0; i < opp.size(); i++) {
+                        if (tackled(userTeam.get(playerWithBall), opp.get(i))) {
+                            tackled = true;
                         }
                     }
-                    // check if in formation
-                    if (formationCount == 15){
-                        inFormation = true;
-                    }
-                    formationCount = 0;
-                    tempList.clear();
-
-                    for (int i = 0; i<opp.size(); i++){
-                        if (tackled(userTeam.get(playerWithBall),opp.get(i))){
-                            System.out.println("p");
+                    if (tackled){
+                        for (int i=0; i<userTeam.size(); i++) {
+                            if(ruck(userTeam.get(i),userTeam.get(playerWithBall))){
+                                if (userTeam.get(i).getX()<userTeam.get(playerWithBall).getX()){
+                                    userTeam.get(i).setX(userTeam.get(i).getX()+userTeam.get(i).getSpeed()/2);
+                                }
+                                if (userTeam.get(i).getY()>userTeam.get(playerWithBall).getY()){
+                                    userTeam.get(i).setY(userTeam.get(i).getY()-userTeam.get(i).getSpeed()/2);
+                                }
+                                if (userTeam.get(i).getY()<userTeam.get(playerWithBall).getY()){
+                                    userTeam.get(i).setY(userTeam.get(i).getY()+userTeam.get(i).getSpeed()/2);
+                                }
+                            }
                         }
                     }
+                    else{
+                        userTeam.get(playerWithBall).setX(userTeam.get(playerWithBall).getX() + userTeam.get(playerWithBall).getSpeed()/2);
+                        for (int i = 0; i < userTeam.size(); i++) {
+                            tempList.add(userTeam.get(i).getX());
+                        }
 
-                }
-                else{
-                    System.out.println("ok");
+                        attackFormation(userTeam, 0);
+                        defensiveFormation(userTeam, opp, 1);
+
+                        for (int i = 0; i < userTeam.size(); i++) {
+                            if (userTeam.get(i).getX() == tempList.get(i)) {
+                                formationCount++;
+                            }
+                        }
+                        // check if in formation
+                        if (formationCount == 15) {
+                            inFormation = true;
+                        }
+                        formationCount = 0;
+                        tempList.clear();
+                    }
                 }
 
             }
